@@ -1942,62 +1942,21 @@ OrionLib:MakeNotification({
 	Time = 5
 })
 
-task.spawn(function()
-	while true do
-		task.wait(math.random(180, 600)) -- Wait between 3 to 10 minutes
-		OrionLib:MakeNotification({
-			Name = "Orion Library",
-			Content = "Are you enjoying this UI Library? Find it at kitsune-hub/orion/documentation.html",
-			Time = 5
-		})
-	end
-end)
+-- a notification like rayfield
+local hasShownOrionNotification = false
 
--- this is a mobile toggle prompt
-local player = game.Players.LocalPlayer
-local Orion = gethui():FindFirstChild("Orion")
-if not Orion then
-    warn("Orion UI not found!")
-    return
+if not hasShownOrionNotification then
+    hasShownOrionNotification = true
+
+    task.spawn(function()
+        task.wait(math.random(180, 600))
+        OrionLib:MakeNotification({
+            Name = "Orion Library",
+            Content = "Are you enjoying this UI Library? Find it at kitsune-hub/orion/documentation.html",
+            Time = 5
+        })
+    end)
 end
-
-local toggleButton = Instance.new("TextButton")
-toggleButton.Name = "OrionMobileToggle"
-toggleButton.Text = "Show Orion"
-toggleButton.Size = UDim2.new(0, 120, 0, 40)
-toggleButton.Position = UDim2.new(0.5, -60, 0, 20)
-toggleButton.AnchorPoint = Vector2.new(0.5, 0)
-toggleButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-toggleButton.TextColor3 = Color3.new(1, 1, 1)
-toggleButton.Font = Enum.Font.GothamBold
-toggleButton.TextSize = 16
-toggleButton.AutoButtonColor = true
-toggleButton.Visible = not Orion.Enabled
-toggleButton.ZIndex = 999
-
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 10)
-corner.Parent = toggleButton
-
-local success = pcall(function()
-    toggleButton.Parent = gethui()
-end)
-if not success then
-    toggleButton.Parent = player:WaitForChild("PlayerGui")
-end
-
-toggleButton.MouseButton1Click:Connect(function()
-    Orion.Enabled = true
-end)
-
-Orion.Changed:Connect(function(property)
-    if property == "Enabled" then
-        toggleButton.Visible = not Orion.Enabled
-    end
-end)
-		
-toggleButton.Visible = not Orion.Enabled
-	
 
 function OrionLib:Destroy()
 	Orion:Destroy()
