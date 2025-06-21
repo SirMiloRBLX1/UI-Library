@@ -1898,7 +1898,7 @@ end)
 	return TabFunction
 end   
 
--- it prins how many seconds it took to load
+-- it print how many seconds it took to load
 local t = tick()
 print("Orion loaded in", math.floor((tick() - t) * 1000), "ms")
 
@@ -1912,6 +1912,16 @@ OrionLib:MakeNotification({
 	Time = 5
 })
 
+task.spawn(function()
+	while true do
+		task.wait(math.random(180, 600))
+		OrionLib:MakeNotification({
+			Name = "Orion Library",
+			Content = "Are you enjoying this UI Library? Find it at kitsune-hub/orion/documentation.html",
+			Time = 5
+		})
+	end
+end)
 
 function OrionLib:Destroy()
 	Orion:Destroy()
