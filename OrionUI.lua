@@ -25,15 +25,24 @@ local OrionLib = {
 	SaveCfg = false
 }
 
---Feather Icons https://github.com/evoincorp/lucideblox/tree/master/src/modules/util - Created by 7kayoh
+--Lucide Icons https://raw.githubusercontent.com/SirMiloRBLX1/UI-Library/refs/heads/main/Icons.lua
 local Icons = {}
 
 local Success, Response = pcall(function()
-	Icons = HttpService:JSONDecode(game:HttpGetAsync("https://raw.githubusercontent.com/evoincorp/lucideblox/master/src/modules/util/icons.json")).icons
+	local RawCode = game:HttpGet("https://raw.githubusercontent.com/SirMiloRBLX1/UI-Library/refs/heads/main/Icons.lua")
+	local LoadedModule = loadstring(RawCode)
+	
+	if typeof(LoadedModule) == "function" then
+		Icons = LoadedModule()
+	else
+		error("Loaded data is not a valid function.")
+	end
 end)
 
-if not Success then
-	warn("\nOrion Library - Failed to load Feather Icons. Error code: " .. Response .. "\n")
+if Success then
+	print("Lucide Icon Has Been Loaded Successfully")
+else
+	warn("\nOrion Library - Failed to load Lucide Icons. Error code: " .. Response .. "\n")
 end	
 
 local function GetIcon(IconName)
@@ -42,7 +51,7 @@ local function GetIcon(IconName)
 	else
 		return nil
 	end
-end   
+end
 
 local Orion = Instance.new("ScreenGui")
 Orion.Name = "Orion"
