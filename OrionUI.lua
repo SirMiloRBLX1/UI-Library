@@ -1935,7 +1935,7 @@ OrionLib:MakeNotification({
 
 task.spawn(function()
 	while true do
-		task.wait(math.random(180, 600))
+		task.wait(math.random(180, 600)) -- Wait between 3 to 10 minutes
 		OrionLib:MakeNotification({
 			Name = "Orion Library",
 			Content = "Are you enjoying this UI Library? Find it at kitsune-hub/orion/documentation.html",
