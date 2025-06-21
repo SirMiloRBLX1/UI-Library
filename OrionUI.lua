@@ -1241,7 +1241,7 @@ end)
 				end
 				return Dropdown
 			end
-	        function ElementFunction:AddMultiDropdown(MultiDropdownConfig)
+function ElementFunction:AddMultiDropdown(MultiDropdownConfig)
 	MultiDropdownConfig = MultiDropdownConfig or {}
 	MultiDropdownConfig.Name = MultiDropdownConfig.Name or "MultiDropdown"
 	MultiDropdownConfig.Options = MultiDropdownConfig.Options or {}
@@ -1332,14 +1332,28 @@ end)
 		MultiDropdownContainer.CanvasSize = UDim2.new(0, 0, 0, MultiDropdownList.AbsoluteContentSize.Y)
 	end)
 
+	-- ✅ FIXED: Label text truncation with ellipsis
 	local function UpdateSelectedLabel()
-		if #MultiDropdown.Values == 0 then
+		local maxDisplay = 3 -- Max options to show before truncating
+		local values = MultiDropdown.Values
+
+		if #values == 0 then
 			SelectedLabel.Text = "None"
 			SelectedLabel.ToolTip = nil
 		else
-			local text = table.concat(MultiDropdown.Values, ", ")
+			local display = {}
+
+			for i = 1, math.min(#values, maxDisplay) do
+				table.insert(display, values[i])
+			end
+
+			local text = table.concat(display, ", ")
+			if #values > maxDisplay then
+				text = text .. ", ..."
+			end
+
 			SelectedLabel.Text = text
-			SelectedLabel.ToolTip = text
+			SelectedLabel.ToolTip = table.concat(values, ", ")
 		end
 	end
 
@@ -1430,7 +1444,9 @@ end)
 	end
 
 	return MultiDropdown
-end
+					end
+	
+
 			function ElementFunction:AddBind(BindConfig)
 				BindConfig.Name = BindConfig.Name or "Bind"
 				BindConfig.Default = BindConfig.Default or Enum.KeyCode.Unknown
