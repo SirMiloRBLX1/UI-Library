@@ -1241,6 +1241,191 @@ end)
 				end
 				return Dropdown
 			end
+			function ElementFunction:AddMultiDropdown(MultiDropdownConfig)
+	MultiDropdownConfig = MultiDropdownConfig or {}
+	MultiDropdownConfig.Name = MultiDropdownConfig.Name or "MultiDropdown"
+	MultiDropdownConfig.Options = MultiDropdownConfig.Options or {}
+	MultiDropdownConfig.Default = MultiDropdownConfig.Default or {}
+	MultiDropdownConfig.Callback = MultiDropdownConfig.Callback or function() end
+	MultiDropdownConfig.Flag = MultiDropdownConfig.Flag or nil
+	MultiDropdownConfig.Save = MultiDropdownConfig.Save or false
+
+	local MultiDropdown = {
+		Values = {},
+		Options = MultiDropdownConfig.Options,
+		Buttons = {},
+		Toggled = false,
+		Type = "MultiDropdown",
+		Save = MultiDropdownConfig.Save
+	}
+
+	local MaxElements = 5
+
+	-- Add default selections
+	for _, val in pairs(MultiDropdownConfig.Default) do
+		if table.find(MultiDropdown.Options, val) then
+			table.insert(MultiDropdown.Values, val)
+		end
+	end
+
+	local MultiDropdownList = MakeElement("List")
+
+	local MultiDropdownContainer = AddThemeObject(SetProps(SetChildren(MakeElement("ScrollFrame", Color3.fromRGB(40, 40, 40), 4), {
+		MultiDropdownList
+	}), {
+		Parent = ItemParent,
+		Position = UDim2.new(0, 0, 0, 38),
+		Size = UDim2.new(1, 0, 1, -38),
+		ClipsDescendants = true
+	}), "Divider")
+
+	local Click = SetProps(MakeElement("Button"), {
+		Size = UDim2.new(1, 0, 1, 0)
+	})
+
+	local MultiDropdownFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+		Size = UDim2.new(1, 0, 0, 38),
+		Parent = ItemParent,
+		ClipsDescendants = true
+	}), {
+		MultiDropdownContainer,
+		SetProps(SetChildren(MakeElement("TFrame"), {
+			AddThemeObject(SetProps(MakeElement("Label", MultiDropdownConfig.Name, 15), {
+				Size = UDim2.new(1, -12, 1, 0),
+				Position = UDim2.new(0, 12, 0, 0),
+				Font = Enum.Font.GothamBold,
+				Name = "Content"
+			}), "Text"),
+			AddThemeObject(SetProps(MakeElement("Image", "rbxassetid://7072706796"), {
+				Size = UDim2.new(0, 20, 0, 20),
+				AnchorPoint = Vector2.new(0, 0.5),
+				Position = UDim2.new(1, -30, 0.5, 0),
+				ImageColor3 = Color3.fromRGB(240, 240, 240),
+				Name = "Ico"
+			}), "TextDark"),
+			AddThemeObject(SetProps(MakeElement("Label", "None", 13), {
+				Size = UDim2.new(1, -40, 1, 0),
+				Font = Enum.Font.Gotham,
+				Name = "Selected",
+				TextXAlignment = Enum.TextXAlignment.Right
+			}), "TextDark"),
+			AddThemeObject(SetProps(MakeElement("Frame"), {
+				Size = UDim2.new(1, 0, 0, 1),
+				Position = UDim2.new(0, 0, 1, -1),
+				Name = "Line",
+				Visible = false
+			}), "Stroke"),
+			Click
+		}), {
+			Size = UDim2.new(1, 0, 0, 38),
+			ClipsDescendants = true,
+			Name = "F"
+		}),
+		AddThemeObject(MakeElement("Stroke"), "Stroke"),
+		MakeElement("Corner")
+	}), "Second")
+
+	AddConnection(MultiDropdownList:GetPropertyChangedSignal("AbsoluteContentSize"), function()
+		MultiDropdownContainer.CanvasSize = UDim2.new(0, 0, 0, MultiDropdownList.AbsoluteContentSize.Y)
+	end)
+
+	local function UpdateSelectedLabel()
+		if #MultiDropdown.Values == 0 then
+			MultiDropdownFrame.F.Selected.Text = "None"
+		else
+			MultiDropdownFrame.F.Selected.Text = table.concat(MultiDropdown.Values, ", ")
+		end
+	end
+
+	local function ToggleOption(value)
+		local index = table.find(MultiDropdown.Values, value)
+		local selected = index ~= nil
+
+		if selected then
+			table.remove(MultiDropdown.Values, index)
+		else
+			table.insert(MultiDropdown.Values, value)
+		end
+
+		for opt, button in pairs(MultiDropdown.Buttons) do
+			local isSelected = table.find(MultiDropdown.Values, opt) ~= nil
+			TweenService:Create(button, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+				BackgroundTransparency = isSelected and 0 or 1
+			}):Play()
+			TweenService:Create(button.Title, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+				TextTransparency = isSelected and 0 or 0.4
+			}):Play()
+		end
+
+		UpdateSelectedLabel()
+		MultiDropdownConfig.Callback(MultiDropdown.Values)
+		SaveCfg(game.GameId)
+	end
+
+	local function AddOptions(options)
+		for _, Option in pairs(options) do
+			local OptionBtn = AddThemeObject(SetProps(SetChildren(MakeElement("Button", Color3.fromRGB(40, 40, 40)), {
+				MakeElement("Corner", 0, 6),
+				AddThemeObject(SetProps(MakeElement("Label", Option, 13, 0.4), {
+					Position = UDim2.new(0, 8, 0, 0),
+					Size = UDim2.new(1, -8, 1, 0),
+					Name = "Title"
+				}), "Text")
+			}), {
+				Parent = MultiDropdownContainer,
+				Size = UDim2.new(1, 0, 0, 28),
+				BackgroundTransparency = 1,
+				ClipsDescendants = true
+			}), "Divider")
+
+			AddConnection(OptionBtn.MouseButton1Click, function()
+				ToggleOption(Option)
+			end)
+
+			MultiDropdown.Buttons[Option] = OptionBtn
+		end
+	end
+
+	function MultiDropdown:Refresh(Options, Delete)
+		if Delete then
+			for _, v in pairs(MultiDropdown.Buttons) do
+				v:Destroy()
+			end    
+			table.clear(MultiDropdown.Options)
+			table.clear(MultiDropdown.Buttons)
+		end
+		MultiDropdown.Options = Options
+		AddOptions(MultiDropdown.Options)
+	end
+
+	AddConnection(Click.MouseButton1Click, function()
+		MultiDropdown.Toggled = not MultiDropdown.Toggled
+		MultiDropdownFrame.F.Line.Visible = MultiDropdown.Toggled
+		TweenService:Create(MultiDropdownFrame.F.Ico, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			Rotation = MultiDropdown.Toggled and 180 or 0
+		}):Play()
+
+		if #MultiDropdown.Options > MaxElements then
+			TweenService:Create(MultiDropdownFrame, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+				Size = MultiDropdown.Toggled and UDim2.new(1, 0, 0, 38 + (MaxElements * 28)) or UDim2.new(1, 0, 0, 38)
+			}):Play()
+		else
+			TweenService:Create(MultiDropdownFrame, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+				Size = MultiDropdown.Toggled and UDim2.new(1, 0, 0, MultiDropdownList.AbsoluteContentSize.Y + 38) or UDim2.new(1, 0, 0, 38)
+			}):Play()
+		end
+	end)
+
+	MultiDropdown:Refresh(MultiDropdown.Options, false)
+	UpdateSelectedLabel()
+
+	if MultiDropdownConfig.Flag then				
+		OrionLib.Flags[MultiDropdownConfig.Flag] = MultiDropdown
+	end
+
+	return MultiDropdown
+					end
+					
 			function ElementFunction:AddBind(BindConfig)
 				BindConfig.Name = BindConfig.Name or "Bind"
 				BindConfig.Default = BindConfig.Default or Enum.KeyCode.Unknown
