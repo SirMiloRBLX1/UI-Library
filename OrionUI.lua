@@ -22,10 +22,10 @@ local OrionFunction = {
 }
 
 -- this basically checks the ui if its created
-local Orion = {}
+local OrionInterface = {}
 
-Orion.Interface = getgenv().Interface
-Orion.LoadUI = getgenv().LoadUI
+OrionInterface.Interface = getgenv().Interface
+OrionInterface.LoadUI = getgenv().LoadUI
 
 local function WaitForInterface()
     local success = false
@@ -40,8 +40,8 @@ local function WaitForInterface()
             success = true
             break
         else
-            if Orion.LoadUI then
-                Orion.LoadUI()
+            if OrionInterface.LoadUI then
+                OrionInterface.LoadUI()
             end
             task.wait(1)
         end
