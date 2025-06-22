@@ -21,41 +21,6 @@ local OrionFunction = {
 	Callback = getgenv().Callback or function() end
 }
 
--- this basically checks the ui if its created
-local OrionInterface = {}
-
-OrionInterface.Interface = getgenv().Interface
-OrionInterface.LoadUI = getgenv().LoadUI
-
-local function WaitForInterface()
-    local success = false
-    local tries = 0
-    local maxTries = 5
-
-    while not success and tries < maxTries do
-        tries += 1
-        local ui = gethui():FindFirstChild("Orion")
-
-        if ui then
-            success = true
-            break
-        else
-            if OrionInterface.LoadUI then
-                OrionInterface.LoadUI()
-            end
-            task.wait(1)
-        end
-    end
-
-    if not success then
-        warn("Orion UI has Failed to Load")
-    end
-end
-
-WaitForInterface()
-
-
-
 -- checks if the user is on mobile
 pcall(function()
     Orion.DevicePlatform = UserInputService:GetPlatform()
