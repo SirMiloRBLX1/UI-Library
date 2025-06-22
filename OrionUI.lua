@@ -75,8 +75,18 @@ end
 -- print mobile platform if detected
 if Orion.DevicePlatform == Enum.Platform.Android then
     print("Device: Android")
+    OrionLib:MakeNotification({
+            Name = "Orion Library",
+            Content = "Mobile Platform Detected",
+            Time = 5
+})
 elseif Orion.DevicePlatform == Enum.Platform.IOS then
     print("Device: iOS")
+    OrionLib:MakeNotification({
+            Name = "Orion Library",
+            Content = "Mobile Platform Detected",
+            Time = 5
+})
 end
 
 local OrionLib = {
