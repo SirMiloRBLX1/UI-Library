@@ -338,7 +338,7 @@ local function CloseOpen()
 	end
 
 	ScreenGui.Name = "OpenClose"
-	ScreenGui.Parent = RunService:IsStudio() or LocalPlayer.PlayerGui or (gethui() or cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")
+        ScreenGui.Parent = RunService:IsStudio() and LocalPlayer.PlayerGui or (gethui() or cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui"))
 	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 		TextButton.Parent = ScreenGui
