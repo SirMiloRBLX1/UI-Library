@@ -966,7 +966,7 @@ function Creator.GetThemeProperty(Property)
 	if Themes[Library.Theme][Property] then
 		return Themes[Library.Theme][Property]
 	end
-	return Themes["CubixTech"][Property]
+	return Themes["Dark"][Property]
 end
 
 function Creator.New(Name, Properties, Children)
@@ -5516,7 +5516,7 @@ local SaveManager = {} do
 			local success, err = self:Load(name)
 			if not success then
 				return self.Library:Notify({
-					Title = "Interface",
+					Title = "Fluent Interface",
 					Content = "Config loader",
 					SubContent = "Failed to load autoload config: " .. err,
 					Duration = 7
@@ -5524,7 +5524,7 @@ local SaveManager = {} do
 			end
 
 			self.Library:Notify({
-				Title = "Interface",
+				Title = "Fluent Interface",
 				Content = "Config loader",
 				SubContent = string.format("Auto loaded config %q", name),
 				Duration = 7
@@ -5547,7 +5547,7 @@ local SaveManager = {} do
 
 				if name:gsub(" ", "") == "" then 
 					return self.Library:Notify({
-						Title = "Interface",
+						Title = "Fluent Interface",
 						Content = "Config loader",
 						SubContent = "Invalid config name (empty)",
 						Duration = 7
@@ -5557,7 +5557,7 @@ local SaveManager = {} do
 				local success, err = self:Save(name)
 				if not success then
 					return self.Library:Notify({
-						Title = "Interface",
+						Title = "Fluent Interface",
 						Content = "Config loader",
 						SubContent = "Failed to save config: " .. err,
 						Duration = 7
