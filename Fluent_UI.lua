@@ -313,8 +313,6 @@ local Library = {
 	Transparency = true,
 	MinimizeKeybind = nil,
 	MinimizeKey = Enum.KeyCode.LeftControl,
-
-	GUI = GUI,
 }
 
 do
