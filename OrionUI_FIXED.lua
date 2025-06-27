@@ -1,4 +1,3 @@
-local cloneref = (cloneref or clonereference or function(instance: any) return instance end)
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
